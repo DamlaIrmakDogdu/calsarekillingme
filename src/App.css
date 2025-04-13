@@ -1,0 +1,82 @@
+body {
+  font-family: 'Winky Rough', cursive, sans-serif;
+  background: #fff0f6;
+  color: #4d4dff;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+}
+
+.app h1 {
+  color: #ff69b4;
+  margin-top: 40px;
+}
+
+h2 {
+  color: #4d4dff;
+}
+
+.nav-buttons {
+  margin: 20px;
+}
+
+button {
+  background-color: #ffb3d9;
+  border: none;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+button:hover {
+  background-color: #ff99cc;
+}
+
+.meal-section {
+  background: #ffe6f0;
+  margin: 15px auto;
+  padding: 15px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.food-form input {
+  padding: 5px;
+  margin: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.food-form button {
+  margin-top: 5px;
+}
+
+li {
+  list-style: none;
+  margin: 5px 0;
+}
+
+.note-section {
+  margin-top: 30px;
+  padding: 15px;
+  background: #e6f7ff;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+textarea {
+  width: 90%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  resize: none;
+  font-family: inherit;
+  font-size: 14px;
+}
