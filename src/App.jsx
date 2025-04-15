@@ -5,14 +5,23 @@ function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [logs, setLogs] = useState({});
   const [note, setNote] = useState('');
+  const [unsavedFood, setUnsavedFood] = useState({});
 
   const formattedDate = currentDate.toISOString().split('T')[0];
 
   const handlePrevDay = () => {
+    if (hasUnsavedInput()) {
+      alert("Please submit or clear your current food input before changing the date! >:3");
+      return;
+    }
     setCurrentDate(new Date(currentDate.setDate(currentDate.getDate() - 1)));
   };
 
   const handleNextDay = () => {
+    if (hasUnsavedInput()) {
+      alert("Please submit or clear your current food input before changing the date! >:3");
+      return;
+    }
     setCurrentDate(new Date(currentDate.setDate(currentDate.getDate() + 1)));
   };
 
@@ -23,6 +32,7 @@ function App() {
     if (!updated[formattedDate]) updated[formattedDate] = [];
     updated[formattedDate].push(newEntry);
     setLogs(updated);
+    setUnsavedFood(prev => ({ ...prev, [mealType]: { food: '', cal: '' } }));
   };
 
   const handleDelete = (entryId) => {
@@ -39,20 +49,29 @@ function App() {
     Snack: '🍓'
   };
 
+  const hasUnsavedInput = () => {
+    return Object.values(unsavedFood).some(entry => entry?.food || entry?.cal);
+  };
+
   return (
     <div className="app">
-      <h1>welcome to your calorie diary</h1>
+      <h1>Welcome to Kcal Counter >:3</h1>
       <h2>{formattedDate}</h2>
 
       <div className="nav-buttons">
-        <button onClick={handlePrevDay}>⬅️ </button>
-        <button onClick={handleNextDay}> ➡️</button>
+        <button onClick={handlePrevDay}>⬅️</button>
+        <button onClick={handleNextDay}>➡️</button>
       </div>
 
       {meals.map(meal => (
         <div key={meal} className="meal-section">
           <h3>{foodIcons[meal]} {meal}</h3>
-          <FoodForm onAdd={(name, cal) => handleAddFood(meal, name, cal)} />
+          <FoodForm
+            meal={meal}
+            onAdd={(name, cal) => handleAddFood(meal, name, cal)}
+            unsaved={unsavedFood[meal]}
+            setUnsaved={setUnsavedFood}
+          />
           <ul>
             {(logs[formattedDate] || []).filter(e => e.meal === meal).map(entry => (
               <li key={entry.id}>
@@ -76,18 +95,31 @@ function App() {
   );
 }
 
-function FoodForm({ onAdd }) {
-  const [food, setFood] = useState('');
-  const [calories, setCalories] = useState('');
+function FoodForm({ meal, onAdd, unsaved, setUnsaved }) {
+  const food = unsaved?.food || '';
+  const calories = unsaved?.cal || '';
+
+  const updateUnsaved = (field, value) => {
+    setUnsaved(prev => ({
+      ...prev,
+      [meal]: {
+        ...prev[meal],
+        [field]: value
+      }
+    }));
+  };
 
   const submit = () => {
-    if (food && calories && calories > 0) {
-      onAdd(food, parseInt(calories));
-      setFood('');
-      setCalories('');
-    } else {
-      alert("we both know ur ass aint eating negative calories");
+    if (!food.trim()) {
+      alert("no food? uh oh :<");
+      return;
     }
+    const calValue = parseInt(calories);
+    if (isNaN(calValue) || calValue < 0) {
+      alert("we both know ur ass aint getting negative calories");
+      return;
+    }
+    onAdd(food, calValue);
   };
 
   return (
@@ -96,13 +128,13 @@ function FoodForm({ onAdd }) {
         type="text"
         placeholder="Food name"
         value={food}
-        onChange={(e) => setFood(e.target.value)}
+        onChange={(e) => updateUnsaved('food', e.target.value)}
       />
       <input
         type="number"
         placeholder="Calories"
         value={calories}
-        onChange={(e) => setCalories(e.target.value)}
+        onChange={(e) => updateUnsaved('cal', e.target.value)}
       />
       <button onClick={submit}>Add</button>
     </div>
